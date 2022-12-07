@@ -9,9 +9,9 @@ import (
 )
 
 type AddPlayerInput struct {
-	ID           string
-	Name         string
-	InitialPrice float64
+	ID           string  `json:"id"`
+	Name         string  `json:"name"`
+	InitialPrice float64 `json:"initial_price"`
 }
 
 type AddPlayerUseCase struct {
@@ -38,4 +38,10 @@ func (a *AddPlayerUseCase) getPlayerRepository(ctx context.Context) repository.P
 	}
 
 	return playerRepository.(repository.PlayerRepositoryInterface)
+}
+
+func NewAddPlayerUseCase(uow uow.UowInterface) *AddPlayerUseCase {
+	return &AddPlayerUseCase{
+		Uow: uow,
+	}
 }

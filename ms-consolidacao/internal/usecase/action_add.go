@@ -9,11 +9,11 @@ import (
 )
 
 type ActionAddInput struct {
-	MatchID  string
-	TeamID   string
-	PlayerID string
-	Minute   int
-	Action   string
+	MatchID  string `json:"match_id"`
+	TeamID   string `json:"team_id"`
+	PlayerID string `json:"player_id"`
+	Minute   int    `json:"minutes"`
+	Action   string `json:"action"`
 }
 
 type ActionAddUseCase struct {
@@ -90,4 +90,11 @@ func (a *ActionAddUseCase) getPlayerRepository(ctx context.Context) repository.P
 		panic(err)
 	}
 	return playerRepository.(repository.PlayerRepositoryInterface)
+}
+
+func NewActionAddUseCase(uow uow.UowInterface, actionTable entity.ActionTableInterface) *ActionAddUseCase {
+	return &ActionAddUseCase{
+		Uow:         uow,
+		ActionTable: actionTable,
+	}
 }
