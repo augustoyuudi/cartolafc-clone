@@ -26,12 +26,15 @@ func (m *MyTeamRepository) AddScore(ctx context.Context, myTeam *entity.MyTeam, 
 	if err != nil {
 		return err
 	}
-
-	err = m.Queries.AddScoreToTeam(ctx, db.AddScoreToTeamParams{
+	myTeam.Score = score + myTeam.Score
+	err = m.Queries.UpdateMyTeamScore(ctx, db.UpdateMyTeamScoreParams{
 		ID:    myTeam.ID,
-		Score: score,
+		Score: myTeam.Score,
 	})
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *MyTeamRepository) FindByID(ctx context.Context, id string) (*entity.MyTeam, error) {

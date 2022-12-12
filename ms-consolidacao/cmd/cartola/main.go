@@ -12,7 +12,8 @@ import (
 	"github.com/augustoyuudi/ms-consolidacao/pkg/uow"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -33,6 +34,16 @@ func main() {
 	registerRepositories(uow)
 
 	r := chi.NewRouter()
+	r.Use(cors.Handler(cors.Options{
+		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{"https://*", "http://*"},
+		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	}))
 	r.Get("/players", httphandler.ListPlayersHandler(ctx, *db.New(dtb)))
 	r.Get("/my-teams/{teamID}/players", httphandler.ListMyTeamPlayersHandler(ctx, *db.New(dtb)))
 	r.Get("/my-teams/{teamID}/balance", httphandler.GetMyTeamBalanceHandler(ctx, *db.New(dtb)))
@@ -44,7 +55,7 @@ func main() {
 	var topics = []string{"newMatch", "chooseTeam", "newPlayer", "matchUpdateResult", "newAction"}
 	msgChan := make(chan *kafka.Message)
 
-	go consumer.Consume(topics, "broker:9094", msgChan)
+	go consumer.Consume(topics, "host.docker.internal:9094", msgChan)
 	consumer.ProcessEvents(ctx, msgChan, uow)
 }
 

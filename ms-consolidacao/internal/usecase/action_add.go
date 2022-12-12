@@ -2,11 +2,15 @@ package usecase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/augustoyuudi/ms-consolidacao/internal/domain/entity"
 	"github.com/augustoyuudi/ms-consolidacao/internal/domain/repository"
 	"github.com/augustoyuudi/ms-consolidacao/pkg/uow"
 )
+
+var errActionNotFound = errors.New("action not found")
 
 type ActionAddInput struct {
 	MatchID  string `json:"match_id"`
@@ -22,23 +26,24 @@ type ActionAddUseCase struct {
 }
 
 func (a *ActionAddUseCase) Execute(ctx context.Context, input ActionAddInput) error {
-	return a.Uow.Do(ctx, func(uow *uow.Uow) error {
+	err := a.Uow.Do(ctx, func(_ *uow.Uow) error {
 		matchRepo := a.getMatchRepository(ctx)
-		myTeamRepo := a.getMyTeamRepository(ctx)
 		playerRepo := a.getPlayerRepository(ctx)
+		myTeamRepo := a.getMyTeamRepository(ctx)
 
 		match, err := matchRepo.FindByID(ctx, input.MatchID)
 		if err != nil {
 			return err
 		}
+		// fmt.Printf("match: %v", match)
 
 		score, err := a.ActionTable.GetScore(input.Action)
 		if err != nil {
-			return err
+			return errActionNotFound
 		}
-
 		theAction := entity.NewGameAction(input.PlayerID, input.Action, input.Minute, score)
 		match.Actions = append(match.Actions, *theAction)
+		fmt.Println("match.Actions: ", theAction)
 
 		err = matchRepo.SaveActions(ctx, match, float64(score))
 		if err != nil {
@@ -56,7 +61,8 @@ func (a *ActionAddUseCase) Execute(ctx context.Context, input ActionAddInput) er
 			return err
 		}
 
-		myTeam, err := myTeamRepo.FindByID(ctx, input.TeamID)
+		// Currently works only with 1 personal team.
+		myTeam, err := myTeamRepo.FindByID(ctx, "22087246-01bc-46ad-a9d9-a99a6d734167")
 		if err != nil {
 			return err
 		}
@@ -66,6 +72,7 @@ func (a *ActionAddUseCase) Execute(ctx context.Context, input ActionAddInput) er
 		}
 		return nil
 	})
+	return err
 }
 
 func (a *ActionAddUseCase) getMatchRepository(ctx context.Context) repository.MatchRepositoryInterface {

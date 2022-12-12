@@ -3,16 +3,16 @@
     "model": "auth.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$390000$Wkm5wqZ5xIKSMmrALdAmKY$/hEivykHXfjSs73YJGQvM7Kq5/EQMIgB+Pfrj9RE1Sc=",
-      "last_login": "2022-11-28T07:46:43.073Z",
+      "password": "pbkdf2_sha256$390000$oMjQ1hYlXPAvegzbdCB1jj$rT4qiO6YuCQf271k39Crc8qSEWUfwBUT8kRFikuKAlY=",
+      "last_login": "2022-12-07T12:56:59.336Z",
       "is_superuser": true,
-      "username": "admin@user.com",
+      "username": "admin",
       "first_name": "",
       "last_name": "",
       "email": "admin@user.com",
       "is_staff": true,
       "is_active": true,
-      "date_joined": "2022-11-28T07:46:12.228Z",
+      "date_joined": "2022-12-07T12:56:38.112Z",
       "groups": [],
       "user_permissions": []
     }
@@ -152,13 +152,6 @@
     "fields": {
       "name": "Inglaterra",
       "uuid": "ace3abc1-003d-4baf-8d93-51135c437c7a"
-    }
-  },
-  {
-    "model": "app.myteam",
-    "pk": 1,
-    "fields": {
-      "uuid": "22087246-01bc-46ad-a9d9-a99a6d734167"
     }
   },
   {

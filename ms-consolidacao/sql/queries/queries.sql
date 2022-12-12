@@ -17,7 +17,7 @@ UPDATE my_team SET score = score + ? WHERE id = ?;
 DELETE FROM actions WHERE match_id = ?;
 
 -- name: CreateMatch :exec
-INSERT INTO matches (id, match_date, team_a_id, team_a_name, team_b_id, team_b_name, result) VALUES (?, ?, ?, ?, ?, ?, ?); 
+INSERT INTO matches (id, match_date, team_a_id, team_a_name, team_b_id, team_b_name, result) VALUES (?, ?, ?, ?, ?, ?, ?);
 
 -- name: GetMatchActionsForUpdate :many
 SELECT * FROM actions WHERE match_id = ? FOR UPDATE;
@@ -70,3 +70,5 @@ UPDATE matches SET match_date = ?, team_a_id = ?, team_a_name = ?, team_b_id = ?
 -- name: GetMyTeamBalance :one
 SELECT score as balance FROM my_team WHERE id = ?;
 
+-- name: UpdateMyTeamScore :exec
+UPDATE my_team SET score = ? WHERE id = ?;
